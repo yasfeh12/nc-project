@@ -3,6 +3,11 @@ const {
   createRef,
   formatComments,
 } = require("../db/seeds/utils");
+const app = require('.././app');
+const request = require('supertest');
+const db = require('../db/connection');
+
+afterAll(() => db.end());
 
 describe("convertTimestampToDate", () => {
   test("returns a new object", () => {
@@ -101,4 +106,6 @@ describe("formatComments", () => {
     const formattedComments = formatComments(comments, {});
     expect(formattedComments[0].created_at).toEqual(new Date(timestamp));
   });
+
+
 });
