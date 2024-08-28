@@ -108,4 +108,74 @@ describe('/api/articles/:article_id', () => {
   });
 });
 
+describe('/api/articles/:article_id/comments', () => {
+  describe('POST', () => {
+    test('POST 201: adds a new comment to the specified article', () => {
+      const newComment = {
+        username: 'butter_bridge',
+        body: 'This is a test comment'
+      };
 
+      return request(app)
+        .post('/api/articles/1/comments')
+        .send(newComment)
+        .expect(201)
+        .then(({ body: { comment } }) => {
+          expect(comment).toEqual(
+            expect.objectContaining({
+              comment_id: expect.any(Number),
+              body: 'This is a test comment',
+              article_id: 1,
+              author: 'butter_bridge',
+              votes: 0,
+              created_at: expect.any(String)
+            })
+          );
+        });
+    });
+
+    test('POST 400: responds with an error when the request body is missing required fields', () => {
+      const newComment = {
+        username: 'butter_bridge'
+      };
+
+      return request(app)
+        .post('/api/articles/1/comments')
+        .send(newComment)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe('Bad request: Missing required fields');
+        });
+    });
+
+    test('POST 404: responds with an error when article_id does not exist', () => {
+      const newComment = {
+        username: 'butter_bridge',
+        body: 'This is a test comment'
+      };
+
+      return request(app)
+        .post('/api/articles/9999999999/comments') 
+        .send(newComment)
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe('Article not found');
+        });
+    });
+
+    test('POST 404: responds with an error when the username does not exist', () => {
+      const newComment = {
+        username: 'non_existent_user',
+        body: 'This is a test comment'
+      };
+
+      return request(app)
+        .post('/api/articles/1/comments')
+        .send(newComment)
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe('User not found');
+        });
+    });
+  });
+}); 
