@@ -179,3 +179,51 @@ describe('/api/articles/:article_id/comments', () => {
     });
   });
 }); 
+
+describe('/api/articles/:article_id', () => {
+  describe('PATCH', () => {
+    test('PATCH 200: updates the vote count of an article and responds with the updated article', () => {
+      const updateData = { inc_votes: 1 };
+      return request(app)
+        .patch('/api/articles/1')
+        .send(updateData)
+        .expect(200)
+        .then(({ body: { article } }) => {
+          expect(article).toEqual(
+            expect.objectContaining({
+              article_id: 1,
+              votes: expect.any(Number),
+            })
+          );
+          expect(article.votes).toBe(101);
+        });
+    });
+    test('PATCH 400: responds with an error when inc_votes is missing or invalid', () => {
+      return request(app)
+        .patch('/api/articles/1')
+        .send({})
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe('Bad request: Missing or invalid field(s)');
+        });
+    });
+    test('PATCH 400: responds with an error when article_id is invalid', () => {
+      return request(app)
+        .patch('/api/articles/not-a-number')
+        .send({ inc_votes: 1 })
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe('Invalid article ID');
+        });
+    });
+    test('PATCH 404: responds with an error when the article_id does not exist', () => {
+      return request(app)
+        .patch('/api/articles/9999')
+        .send({ inc_votes: 1 })
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe('Article not found');
+        });
+    });
+  });
+});
