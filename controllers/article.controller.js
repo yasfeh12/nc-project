@@ -97,3 +97,17 @@ exports.updateArticleVotes = (req, res, next) => {
       }
     });
 };
+
+exports.getArticles = (req, res, next) => {
+  fetchAllArticles()
+    .then((articles) => {
+      res.status(200).send({ articles });
+    })
+    .catch(next);
+};
+
+exports.fetchAllArticles = () => {
+  return db.query('SELECT * FROM articles;').then((result) => {
+    return result.rows;
+  });
+};

@@ -5,6 +5,7 @@ const {
   getAllEndpoints
 } = require('./controllers/topics.controller');
 const {
+  getArticles,
   getArticleById,
   getCommentsByArticleId,
   addCommentByArticleId,
@@ -13,6 +14,7 @@ const {
 
 router.get('/topics', getTopics);
 router.get('/', getAllEndpoints);
+router.get('/articles', getArticles);
 router.get('/articles/:article_id', getArticleById);
 router.get('/articles/:article_id/comments', getCommentsByArticleId);
 router.post('/articles/:article_id/comments', addCommentByArticleId);
