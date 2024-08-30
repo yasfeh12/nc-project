@@ -43,3 +43,8 @@ exports.updateArticleById = (article_id, inc_votes) => {
       return result.rows[0];
     });
   };  
+
+  exports.fetchAllUsers = () => {
+    return db.query('SELECT username, name, avatar_url FROM users;')
+      .then((result) => result.rows);
+  };

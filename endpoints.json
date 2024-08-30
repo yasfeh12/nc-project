@@ -74,5 +74,34 @@
         "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg"
       }
     }
+  },
+  "DELETE /api/comments/:comment_id": {
+    "description": "Deletes the given comment by comment_id.",
+    "responses": {
+      "204": "No content",
+      "400": {
+        "msg": "Invalid comment ID format"
+      },
+      "404": {
+        "msg": "Comment not found"
+      }
+    }
+  },
+  "GET /api/users": {
+    "description": "Retrieves all users",
+    "exampleResponse": {
+      "users": [
+        {
+          "username": "butter_bridge",
+          "name": "Jonny",
+          "avatar_url": "https://www.example.com/avatar1.png"
+        },
+        {
+          "username": "icellusedkars",
+          "name": "Sam",
+          "avatar_url": "https://www.example.com/avatar2.png"
+        }
+      ]
+    }
   }
 }
