@@ -6,6 +6,8 @@ const seed = require('../db/seeds/seed');
 const seedDATA = require('../db/data/test-data/index')
 const fs = require('fs');
 const path = require('path');
+const { toBeSortedBy } = require('jest-sorted');
+expect.extend({ toBeSortedBy });
 
 afterAll(() => db.end());
 beforeEach(()=>{
@@ -225,5 +227,53 @@ describe('/api/articles/:article_id', () => {
           expect(body.msg).toBe('Article not found');
         });
     });
+  });
+});
+
+describe('/api/articles', () => {
+  test('GET 200: responds with an array of articles sorted by date in descending order by default', () => {
+    return request(app)
+      .get('/api/articles')
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles).toBeInstanceOf(Array);
+        expect(articles).toBeSortedBy('created_at', { descending: true });
+      });
+  });
+
+  test('GET 200: sorts articles by any valid column', () => {
+    return request(app)
+      .get('/api/articles?sort_by=title')
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles).toBeSortedBy('title');
+      });
+  });
+
+  test('GET 200: orders articles in ascending order when specified', () => {
+    return request(app)
+      .get('/api/articles?order=asc')
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles).toBeSortedBy('created_at');
+      });
+  });
+
+  test('GET 400: responds with an error when sort_by column is invalid', () => {
+    return request(app)
+      .get('/api/articles?sort_by=invalid_column')
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Invalid sort_by column');
+      });
+  });
+
+  test('GET 400: responds with an error when order query is invalid', () => {
+    return request(app)
+      .get('/api/articles?order=invalid_order')
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Invalid order query');
+      });
   });
 });

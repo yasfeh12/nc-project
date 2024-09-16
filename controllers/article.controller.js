@@ -1,6 +1,5 @@
-const { fetchArticleById, insertCommentByArticleId, updateArticleById } = require('../models/model'); 
+const { fetchArticleById, insertCommentByArticleId, updateArticleById, fetchAllArticles } = require('../models/model'); 
 const { fetchCommentsByArticleId } = require('../models/comments.model');
-const db = require('../db/connection');
 
 exports.getArticleById = (req, res, next) => {
   const { article_id } = req.params;
@@ -12,9 +11,7 @@ exports.getArticleById = (req, res, next) => {
       res.status(200).send({ article });
     })
     .catch((err) => {
-      if (err.code === '22P02') { 
-        res.status(400).send({ msg: 'Invalid article ID' });
-      } else if (err.code === '22003') { 
+      if (err.code === '22P02' || err.code === '22003') { 
         res.status(400).send({ msg: 'Invalid article ID' });
       } else if (err.status === 404) { 
         res.status(404).send({ msg: 'Article not found' });
@@ -45,19 +42,16 @@ exports.addCommentByArticleId = (req, res, next) => {
   const { article_id } = req.params;
   const { username, body } = req.body;
 
-
   if (!username || !body) {
     return res.status(400).send({ msg: 'Bad request: Missing required fields' });
   }
 
- 
   insertCommentByArticleId(article_id, username, body)
     .then((comment) => {
       res.status(201).send({ comment });
     })
     .catch((err) => {
       if (err.code === '23503') { 
-       
         if (err.constraint === 'comments_article_id_fkey') {
           res.status(404).send({ msg: 'Article not found' });
         } else if (err.constraint === 'comments_author_fkey') {
@@ -65,21 +59,19 @@ exports.addCommentByArticleId = (req, res, next) => {
         } else {
           next(err);
         }
-      } else if (err.code === '22P02') { 
+      } else if (err.code === '22P02' || err.code === '22003') { 
         res.status(400).send({ msg: 'Invalid article ID' });
-      } else if (err.code === '22003') {
-        res.status(404).send({ msg: 'Article not found' });
       } else {
         next(err);
       }
     });
 }; 
 
-
 exports.updateArticleVotes = (req, res, next) => {
   const { article_id } = req.params;
   const { inc_votes } = req.body;
-  if (!inc_votes || typeof inc_votes !== 'number') {
+  
+  if (typeof inc_votes !== 'number') {
     return res.status(400).send({ msg: 'Bad request: Missing or invalid field(s)' });
   }
 
@@ -99,15 +91,10 @@ exports.updateArticleVotes = (req, res, next) => {
 };
 
 exports.getArticles = (req, res, next) => {
-  fetchAllArticles()
+  const { sort_by, order } = req.query;
+  fetchAllArticles({ sort_by, order })
     .then((articles) => {
       res.status(200).send({ articles });
     })
     .catch(next);
-};
-
-exports.fetchAllArticles = () => {
-  return db.query('SELECT * FROM articles;').then((result) => {
-    return result.rows;
-  });
 };

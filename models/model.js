@@ -6,6 +6,7 @@ exports.fetchTopics = () => {
       return result.rows;
     });
 };
+
 exports.fetchArticleById = (article_id) => {
   return db
     .query('SELECT * FROM articles WHERE article_id = $1', [article_id])
@@ -42,9 +43,24 @@ exports.updateArticleById = (article_id, inc_votes) => {
       }
       return result.rows[0];
     });
-  };  
+};
 
-  exports.fetchAllUsers = () => {
-    return db.query('SELECT username, name, avatar_url FROM users;')
-      .then((result) => result.rows);
-  };
+exports.fetchAllArticles = ({ sort_by = 'created_at', order = 'desc' }) => {
+  const validSortBy = ['author', 'title', 'article_id', 'body', 'topic', 'created_at', 'votes', 'article_img_url'];
+  const validOrder = ['asc', 'desc'];
+
+  if (!validSortBy.includes(sort_by)) {
+    return Promise.reject({ status: 400, msg: 'Invalid sort_by column' });
+  }
+
+  if (!validOrder.includes(order)) {
+    return Promise.reject({ status: 400, msg: 'Invalid order query' });
+  }
+
+  // Use parameterized queries to avoid SQL injection risks
+  const queryStr = `SELECT * FROM articles ORDER BY ${sort_by} ${order};`;
+  return db.query(queryStr)
+    .then((result) => {
+      return result.rows;
+    });
+};

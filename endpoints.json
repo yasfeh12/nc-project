@@ -103,5 +103,30 @@
         }
       ]
     }
+  },
+  "GET /api/articles": {
+    "description": "Retrieves a list of articles with optional sorting and ordering.",
+    "queries": {
+      "sort_by": "Column to sort by, e.g., 'author', 'title', 'created_at', etc. (defaults to 'created_at').",
+      "order": "Order to sort by, 'asc' for ascending, 'desc' for descending (defaults to 'desc')."
+    },
+    "exampleRequest": {
+      "sort_by": "title",
+      "order": "asc"
+    },
+    "exampleResponse": {
+      "articles": [
+        {
+          "author": "butter_bridge",
+          "title": "Living in the shadow of a great man",
+          "article_id": 1,
+          "body": "I find this existence challenging",
+          "topic": "mitch",
+          "created_at": "2020-07-09T20:11:00.000Z",
+          "votes": 100,
+          "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg"
+        }
+      ]
+    }
   }
 }
