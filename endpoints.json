@@ -75,6 +75,36 @@
       }
     }
   },
+  "PATCH /api/articles/:article_id/comments/:comment_id": {
+    "description": "Updates the vote count for a specific comment by its ID on the given article.",
+    "requestBody": {
+      "inc_votes": "A number indicating how much to increment or decrement the vote count for the comment"
+    },
+    "exampleRequest": {
+      "inc_votes": 1
+    },
+    "exampleResponse": {
+      "comment": {
+        "comment_id": 1,
+        "body": "This is a comment.",
+        "article_id": 1,
+        "author": "butter_bridge",
+        "votes": 17,
+        "created_at": "2017-11-22T12:36:03.389Z"
+      }
+    },
+    "responses": {
+      "200": {
+        "description": "The updated comment is returned."
+      },
+      "400": {
+        "msg": "Invalid vote increment/decrement or comment ID."
+      },
+      "404": {
+        "msg": "Comment not found"
+      }
+    }
+  },
   "DELETE /api/comments/:comment_id": {
     "description": "Deletes the given comment by comment_id.",
     "responses": {
