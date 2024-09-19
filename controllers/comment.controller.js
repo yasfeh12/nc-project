@@ -1,8 +1,7 @@
 const {
   removeCommentById,
   updateCommentById,
-} = require("../models/comments.modell");
-
+} = require("../models/comments.model");
 exports.deleteCommentById = (req, res, next) => {
   const { comment_id } = req.params;
 
