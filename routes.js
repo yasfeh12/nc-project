@@ -1,13 +1,13 @@
 const express = require("express");
-const {
-  updateCommentVotes,
-} = require("../nc-project/controllers/comment.controller");
 const router = express.Router();
 const {
   getTopics,
   getAllEndpoints,
 } = require("./controllers/topics.controller");
-const { deleteCommentById } = require("./controllers/comment.controller");
+const {
+  deleteCommentById,
+  updateCommentVotes,
+} = require("./controllers/comment.controller");
 const {
   getArticles,
   getArticleById,
